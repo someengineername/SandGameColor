@@ -1,10 +1,10 @@
 import pygame
 import time
 import random
-from matrix import *
-from MovingDot import *
-from EmptySpace import *
-from ColorCycler import *
+from settings_matrix import *
+from class_MovingDot import *
+from class_EmptySpace import *
+from class_ColorCycler import *
 
 pygame.init()
 
@@ -18,6 +18,7 @@ def tick(timing: int | float):
 def random_color():
     return random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
 
+# Type = 1
 
 # color cycler init
 color_cycler = ColorCycler()
