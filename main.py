@@ -2,37 +2,18 @@ import pygame
 import time
 import random
 import functools
+from matrix_definition import *
+from MovingDot import *
+from EmptySpace import *
 
 pygame.init()
 
-
-class MovingDot:
-    def __init__(self, int1=50, int2=50, int3=50):
-        self._color = (int1, int2, int3)
-
-    def get_color(self):
-        return self._color
-
-
-class EmptySpace:
-    def __init__(self):
-        self._color = (20, 20, 20)
-
-    def get_color(self):
-        return self._color
-
-
-# temp function of tick (time-control)
+# function of tick (time-control)
 def tick(timing: int | float):
     time.sleep(timing)
     pygame.display.update()
 
-
 # matrix preparation
-matrix_dimension_y = 10
-matrix_dimension_x = 15
-cell_length = 25
-cell_gap = 2
 matrix = [[EmptySpace() for j in range(matrix_dimension_x)] for i in range(matrix_dimension_y)]
 
 # screen initialization with update to cell size
@@ -41,19 +22,11 @@ screen_height = (cell_gap + cell_length) * matrix_dimension_y + cell_gap
 screen_base_color = (0, 0, 0)
 screen = pygame.display.set_mode((screen_width, screen_height))
 
-# main loop
+# main loop bool
 run = True
 
 # mouse interaction variables
 GLOBAL_MOUSE_PRESSED = False
-
-# class of pixel - to draw with some
-
-
-# matrix[5][5] = MovingDot()
-# matrix[0][0] = MovingDot()
-# matrix[10][13] =  MovingDot()
-# matrix[19][34] = MovingDot()
 
 while run:
 
@@ -64,7 +37,6 @@ while run:
             run = False
 
         # mouse interaction event
-
         if event.type == pygame.MOUSEBUTTONDOWN:
 
             # pressing-nesting of Moving|Empty spaces
@@ -99,17 +71,19 @@ while run:
             if isinstance(matrix[i][j], MovingDot):
 
                 if i != 0:
-                    matrix[i][j] = EmptySpace()
-                    matrix[i - 1][j] = MovingDot()
+                    second_matrix[i][j] = EmptySpace()
+                    second_matrix[i - 1][j] = MovingDot()
+                else:
+                    second_matrix[i][j] = MovingDot()
 
     # drawing matrix
     for i in range(matrix_dimension_y):
         for j in range(matrix_dimension_x):
-            pygame.draw.rect(screen, matrix[i][j].get_color(), (cell_gap + ((cell_length + cell_gap) * j),
-                                                                screen_height - cell_gap - cell_length - (
-                                                                            cell_gap + cell_length) * i,
-                                                                cell_length,
-                                                                cell_length))
+            pygame.draw.rect(screen, second_matrix[i][j].get_color(), (cell_gap + ((cell_length + cell_gap) * j),
+                                                                       screen_height - cell_gap - cell_length - (
+                                                                               cell_gap + cell_length) * i,
+                                                                       cell_length,
+                                                                       cell_length))
 
     if GLOBAL_MOUSE_PRESSED:
         pygame.draw.rect(screen, (150, 150, 150), (10, 30, 10, 10))
@@ -121,5 +95,7 @@ while run:
     # frame generation
     # -------------
     tick(0.1)
+
+    matrix = second_matrix
 
 pygame.quit()
