@@ -8,10 +8,16 @@ from EmptySpace import *
 
 pygame.init()
 
+
 # function of tick (time-control)
 def tick(timing: int | float):
     time.sleep(timing)
     pygame.display.update()
+
+
+def random_color():
+    return random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
+
 
 # matrix preparation
 matrix = [[EmptySpace() for j in range(matrix_dimension_x)] for i in range(matrix_dimension_y)]
@@ -44,10 +50,11 @@ while run:
             mouse_matrix_position = [mouse_coor[0] // (cell_length + cell_gap),
                                      (screen_height - mouse_coor[1]) // (cell_length + cell_gap)]
 
-            if isinstance(matrix[mouse_matrix_position[1]][mouse_matrix_position[0]], MovingDot):
+            if isinstance(matrix[mouse_matrix_position[1]][mouse_matrix_position[0]], MovingDot) and isinstance(
+                    matrix[mouse_matrix_position[1] - 1][mouse_matrix_position[0]], EmptySpace):
                 matrix[mouse_matrix_position[1]][mouse_matrix_position[0]] = EmptySpace()
             else:
-                matrix[mouse_matrix_position[1]][mouse_matrix_position[0]] = MovingDot()
+                matrix[mouse_matrix_position[1]][mouse_matrix_position[0]] = MovingDot(*random_color())
 
             GLOBAL_MOUSE_PRESSED = True
 
@@ -70,11 +77,46 @@ while run:
 
             if isinstance(matrix[i][j], MovingDot):
 
-                if i != 0:
-                    second_matrix[i][j] = EmptySpace()
-                    second_matrix[i - 1][j] = MovingDot()
+                # bottom-side condition
+                if i == 0:
+                    second_matrix[i][j] = MovingDot(*matrix[i][j].get_color())
+                # left-hand side condition
+                # elif i == 5:
+                #     pass
+                # right-hand side condition
+                # elif i == 5:
+                #     pass
+                # second_matrix[i][j] = MovingDot()
+
+                # general behaviour condition
                 else:
-                    second_matrix[i][j] = MovingDot()
+                    # if bottom is empty
+                    if isinstance(matrix[i - 1][j], EmptySpace):
+                        second_matrix[i - 1][j] = MovingDot(*matrix[i][j].get_color())
+                        second_matrix[i][j] = EmptySpace()
+                    # if bottom is occupied
+                    else:
+                        # if bot-right side occupied
+                        if (isinstance(matrix[i - 1][j - 1], MovingDot) and
+                                isinstance(matrix[i - 1][j + 1], MovingDot) and
+                                isinstance(matrix[i - 1][j], MovingDot)):
+                            second_matrix[i][j] = MovingDot(*matrix[i][j].get_color())
+                        # if bot-left side occupied
+                        elif isinstance(matrix[i - 1][j - 1], MovingDot):
+                            print('lh')
+                            second_matrix[i - 1][j + 1] = MovingDot(*matrix[i][j].get_color())
+                        # if both sides free => 50|50 %
+                        elif (isinstance(matrix[i - 1][j - 1], EmptySpace) and
+                              isinstance(matrix[i - 1][j + 1], EmptySpace)):
+                            print('50|50')
+                            if random.randint(0, 1) == 1:
+                                second_matrix[i - 1][j + 1] = MovingDot(*matrix[i][j].get_color())
+                            else:
+                                second_matrix[i - 1][j - 1] = MovingDot(*matrix[i][j].get_color())
+                        # if everything's occupied
+                        elif isinstance(matrix[i - 1][j + 1], MovingDot):
+                            print('rh')
+                            second_matrix[i - 1][j - 1] = MovingDot(*matrix[i][j].get_color())
 
     # drawing matrix
     for i in range(matrix_dimension_y):
@@ -94,7 +136,7 @@ while run:
     # -------------
     # frame generation
     # -------------
-    tick(0.1)
+    tick(0.05)
 
     matrix = second_matrix
 
