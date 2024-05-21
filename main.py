@@ -15,8 +15,8 @@ def tick(timing: int | float):
     pygame.display.update()
 
 
-def random_color():
-    return random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
+# def random_color():
+#     return random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
 
 # Type = 1
 
@@ -76,23 +76,21 @@ while run:
                     # if bottom - empty => move down
                     if isinstance(matrix[i - 1][j], EmptySpace):
                         second_matrix[i - 1][j] = MovingDot(*matrix[i][j].get_color())
-                        # second_matrix[i][j] = EmptySpace()
                     # if bottom - busy
                     elif isinstance(matrix[i - 1][j + 1], MovingDot):
                         second_matrix[i][j] = MovingDot(*matrix[i][j].get_color())
                     elif isinstance(matrix[i - 1][j + 1], EmptySpace):
-                        second_matrix[i - 1][j + 1] = MovingDot(*matrix[i][j].get_color())
+                        second_matrix[i][j + 1] = MovingDot(*matrix[i][j].get_color())
                 # right-hand side condition
                 elif j == matrix_dimension_x - 1:
                     # if bottom - empty => move down
                     if isinstance(matrix[i - 1][j], EmptySpace):
                         second_matrix[i - 1][j] = MovingDot(*matrix[i][j].get_color())
-                        # second_matrix[i][j] = EmptySpace()
                     # if bottom - busy
                     elif isinstance(matrix[i - 1][j - 1], MovingDot):
                         second_matrix[i][j] = MovingDot(*matrix[i][j].get_color())
                     elif isinstance(matrix[i - 1][j - 1], EmptySpace):
-                        second_matrix[i - 1][j - 1] = MovingDot(*matrix[i][j].get_color())
+                        second_matrix[i][j - 1] = MovingDot(*matrix[i][j].get_color())
                 # general behaviour condition
                 else:
                     # if bottom is empty
@@ -101,27 +99,25 @@ while run:
                         second_matrix[i][j] = EmptySpace()
                     # if bottom is occupied
                     else:
-                        # if bot-right side occupied
+                        # if everything's occupied
                         if (isinstance(matrix[i - 1][j - 1], MovingDot) and
                                 isinstance(matrix[i - 1][j + 1], MovingDot) and
                                 isinstance(matrix[i - 1][j], MovingDot)):
                             second_matrix[i][j] = MovingDot(*matrix[i][j].get_color())
                         # if bot-left side occupied
                         elif isinstance(matrix[i - 1][j - 1], MovingDot):
-                            # print('lh')
-                            second_matrix[i - 1][j + 1] = MovingDot(*matrix[i][j].get_color())
+                            # i - 1
+                            second_matrix[i][j + 1] = MovingDot(*matrix[i][j].get_color())
                         # if both sides free => 50|50 %
                         elif (isinstance(matrix[i - 1][j - 1], EmptySpace) and
                               isinstance(matrix[i - 1][j + 1], EmptySpace)):
-                            # print('50|50')
                             if random.randint(0, 1) == 1:
-                                second_matrix[i - 1][j + 1] = MovingDot(*matrix[i][j].get_color())
+                                second_matrix[i][j + 1] = MovingDot(*matrix[i][j].get_color())
                             else:
-                                second_matrix[i - 1][j - 1] = MovingDot(*matrix[i][j].get_color())
-                        # if everything's occupied
+                                second_matrix[i][j - 1] = MovingDot(*matrix[i][j].get_color())
+                        # if bot-right side occupied
                         elif isinstance(matrix[i - 1][j + 1], MovingDot):
-                            # print('rh')
-                            second_matrix[i - 1][j - 1] = MovingDot(*matrix[i][j].get_color())
+                            second_matrix[i][j - 1] = MovingDot(*matrix[i][j].get_color())
 
     mouse_coor = pygame.mouse.get_pos()
     mouse_matrix_position = [mouse_coor[0] // (cell_length + cell_gap),
@@ -151,7 +147,7 @@ while run:
     # -------------
     # frame generation
     # -------------
-    tick(0.001)
+    tick(0.005)
 
     matrix = second_matrix
 
