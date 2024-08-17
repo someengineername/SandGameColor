@@ -8,6 +8,8 @@ from class_ColorCycler import *
 
 pygame.init()
 
+print('12341234')
+
 
 # function of tick (time-control)
 def tick(timing: int | float):
