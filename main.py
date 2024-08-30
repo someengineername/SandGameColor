@@ -17,11 +17,6 @@ def tick(timing: int | float):
     pygame.display.update()
 
 
-# def random_color():
-#     return random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
-
-# Type = 1
-
 # color cycler init
 color_cycler = ColorCycler()
 
@@ -58,6 +53,7 @@ while run:
     # ---------
     # drawing section
     # ---------
+
 
     # screen fill
     screen.fill(screen_base_color)
